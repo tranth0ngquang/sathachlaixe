@@ -1,5 +1,4 @@
 // Bộ câu hỏi
-
 function getQuestions(topic) {
   if (topic === "A1 - Đề 1")
     return [
@@ -327,38 +326,60 @@ function getQuestions(topic) {
     ];
 }
 
-// --------------------  *  --------------------  *  ----------------------
-
 let currentQuestionIndex = 0;
 let isQuizSubmitted = false;
 
+//! DISABLED KHI NGƯỜI DÙNG CHƯA CHỌN ĐỀ TÀI
 document.getElementById("topic-select").addEventListener("change", function () {
   const startButton = document.getElementById("start-quiz");
   startButton.disabled = !this.value;
 });
 
-// Số lượng câu cần trả lời đúng và số lượng câu hỏi
+//! Số lượng câu cần trả lời đúng và số lượng câu hỏi
 let quantity = 21;
 
-// --------------------  *  --------------------  *  ----------------------
-
-// Băng thông tin đề thi + kết quả thi thử
+// KHI CLICK VÀO NÚT BẮT ĐẦU THÌ LÀM CÁC CÔNG VIỆC SAU
 document.getElementById("start-quiz").addEventListener("click", function () {
   // reset bien isQuizSubmitted
   isQuizSubmitted = false;
 
-  const selectedTopic = document.getElementById("topic-select").value;
-  let quantityLength = getQuestions(selectedTopic).length;
   const quizContent = document.getElementById("quiz-content");
-  const selectionScreen = document.getElementById("selection-screen");
+  // const selectionScreen = document.getElementById("selection-screen");
   const infoScreen = document.getElementById("info-screen");
 
+  // THỜI GIAN THI
+  startCountdown(5);
+
+  // KHI CLICK VÀO NÚT BẮT ĐẦU THÌ NẾU ĐÃ CHỌN ĐỀ TÀI
+  // 1. HIỂN THỊ QUIZ CONTENT (cha của answers-container và questions-container)
+  // 2. HIỂN THỊ INFO SCREEN
+  const selectedTopic = document.getElementById("topic-select").value;
+  if (selectedTopic) {
+    // !1. HIỂN THỊ QUIZ CONTENT
+    quizContent.style.display = "block";
+    // !2. HIỂN THỊ INFO SCREEN
+    // Xử lý infoccreen trước khi hiển thị
+    showInfoScreen();
+    infoScreen.style.display = "block";
+    //! 3. HIỂN THỊ CÂU HỎI ĐẦU TIÊN VÀ CÁC CÂU TRẢ LỜI BÊN PHẢI
+    const questions = getQuestions(selectedTopic);
+    showSelectAnswer(questions);
+    showQuestionDetails(0, questions);
+  }
+});
+
+// --------------------  *  --------------------  *  ----------------------
+
+// XỬ LÝ HIỂN THỊ LÊN INFO SCREEN VÀ THÊM INFO SCREEN FINISH VÀ THAY ĐỔI CÁC TRẠNG THÁI CỦA INFO SCREEN
+const showInfoScreen = () => {
   // info-screen-finish
   const infoScreenFinish = document.getElementById("info-screen-finish");
   if (infoScreenFinish) {
     infoScreenFinish.style.display = "none";
   }
-  startCountdown(10);
+
+  // THAY ĐỔI CÁC TRẠNG THÁI CỦA INFO SCREEN
+  let selectedTopic = document.getElementById("topic-select").value;
 
   document.getElementById("info-name").textContent =
     "Họ và tên: " + document.getElementById("user-name").value;
@@ -368,195 +389,168 @@ document.getElementById("start-quiz").addEventListener("click", function () {
     "Ngày: " + new Date().toLocaleDateString();
   document.getElementById("info-status").textContent = "Trạng thái: Đang thi  ";
 
+  let quantityLength = getQuestions(selectedTopic).length;
   document.getElementById(
     "info-quantity"
   ).textContent = `Bạn cần trả lời đúng ${quantity}/${quantityLength} câu hỏi`;
+};
 
-  // Bảng thi thử có id: info-screen
-  if (selectedTopic) {
-    selectionScreen.style.display = "block";
-    quizContent.style.display = "block";
-    infoScreen.style.display = "block";
-    const questions = getQuestions(selectedTopic);
-    displayQuestions(questions);
-    showQuestionDetails(0, questions);
-  }
-});
-
-// --------------------  *  --------------------  *  ----------------------
-
-// const submmitHandle = (questions) => {
-//   submitButton.addEventListener("click", function () {
-//     isQuizSubmitted = true;
-//     const confirmation = confirm("Bạn có chắc chắn muốn nộp bài không?");
-
-//     // Nếu nhấn ok thì làm các cái sau
-//     if (confirmation) {
-//       const { correctCount, incorrectCount, unselectedCount } =
-//         checkAnswers(questions);
-
-//       // Cập nhật thông tin trạng thái thi
-//       document.getElementById("info-status").textContent = "Trạng thái: Đã thi";
-
-//       // code for modal
-//       // Prepare the result content for Modal
-//       const resultContent = `
-//           <hr>
-//           <h5 class="pt-1">Kết quả thi:</h5>
-//           <p style="color: black; font-weight: 700;">Số câu đúng: ${correctCount} câu.</p>
-//           <p style="color: black; font-weight: 700;">Số câu sai: ${incorrectCount} câu.</p>
-//           <p style="color: black; font-weight: 700;">Số câu chưa chọn: ${unselectedCount} câu.</p>
-//           <p>Bạn cần trả lời đúng ${quantity} câu hỏi thì đậu.</p>
-//           <p style="color: white; background-color: ${
-//             correctCount >= quantity ? "green" : "red"
-//           }; border-radius: 8px; padding: 10px; text-align: center;"> ${
-//         correctCount < quantity ? "Bạn đã trượt." : "Bạn đã đậu."
-//       }
-//           </p>
-//           <hr>
-//       `;
-//       // Insert result content into modal body
-//       document.getElementById("resultModalBody").innerHTML = resultContent;
-//       // Display the modal
-//       $("#resultModal").modal("show");
-
-//       // code for info-screen-finish
-//       const infoScreenFinish = document.getElementById("info-screen-finish");
-//       infoScreenFinish.style.display = "block";
-//       while (infoScreenFinish.firstChild) {
-//         infoScreenFinish.removeChild(infoScreenFinish.firstChild);
-//       }
-//       const resultDiv = document.createElement("div");
-//       resultDiv.innerHTML = `
-//         <hr>
-//         <h5 class="pt-1">Kết quả thi:</h5>
-//         <p style="color: black; font-weight: 700;">Số câu đúng: ${correctCount} câu.</p>
-//         <p style="color: black; font-weight: 700;">Số câu sai: ${incorrectCount} câu.</p>
-//         <p style="color: black; font-weight: 700;">Số câu chưa chọn: ${unselectedCount} câu.</p>
-//         <p>Bạn cần trả lời đúng ${quantity} câu hỏi thì đậu.</p>
-//         <p style="color: white; background-color: ${
-//           correctCount >= quantity ? "green" : "red"
-//         };
-//         border-radius: 8px; padding: 10px; text-align: center;">
-//         ${correctCount < quantity ? "Bạn đã trượt." : "Bạn đã đậu."}
-//         </p>
-//         <hr>
-//         `;
-//       infoScreenFinish.appendChild(resultDiv);
-
-//       submitButton.style.display = "none";
-//       showQuestionDetails(0, questions);
-//       // clear countdown
-//       clearInterval(countdownInterval);
-//     }
-//   });
-// };
-
-// Các câu hỏi
-
-function displayQuestions(questions) {
-  const questionsContainer = document.getElementById("questions-container");
-  const answersContainer = document.getElementById("answers-container");
-  questionsContainer.innerHTML = "";
-  answersContainer.innerHTML = "";
-
-  // Tạo nút nộp bài khi hiển thị nhánh phải
+//! TẠO VÀ XỬ LÝ BUTTON SUBMIT
+// TẠO BUTTON BUTTON SUBMIT
+const createSubmitButton = () => {
   const submitButton = document.createElement("button");
   submitButton.id = "submit-button";
   submitButton.classList = "btn btn-danger";
   submitButton.textContent = "KẾT THÚC";
-  // submmitHandle(questions);
+  return submitButton;
+};
 
+//! TẠO VÀ XỬ LÝ BUTTON SUBMIT END************************************
+
+//! ADD BUTTON VÀO ANSWER CONTAINER
+const addSubmitButton = () => {
+  const submitButton = createSubmitButton();
+  const answersContainer = document.getElementById("answers-container");
+  answersContainer.appendChild(submitButton);
+
+  // XỬ LÝ KHI CLICK VÀO BUTTON SUBMIT
   submitButton.addEventListener("click", function () {
     isQuizSubmitted = true;
     const confirmation = confirm("Bạn có chắc chắn muốn nộp bài không?");
+
+    // Nếu nhấn ok thì làm các cái sau:
+    // 1. kiểm tra đáp án,
+    // 2. show modal kết quả,
+    // 3. tạo nội dung cho info-screen-finish,
+    // 4. ẩn nút submit,
+    // 5. hiển thị câu đầu tiên có đổi màu bg
+    // 6. clear countdown
+
     if (confirmation) {
-      const { correctCount, incorrectCount, unselectedCount } =
-        checkAnswers(questions);
-
-      // Prepare the result content
-      const resultContent = `
-   <hr>
-   <h5 class="pt-1">Kết quả thi:</h5>
-   <p style="color: black; font-weight: 700;">Số câu đúng: ${correctCount} câu.</p>
-   <p style="color: black; font-weight: 700;">Số câu sai: ${incorrectCount} câu.</p>
-   <p style="color: black; font-weight: 700;">Số câu chưa chọn: ${unselectedCount} câu.</p>
-   <p>Bạn cần trả lời đúng ${quantity} câu hỏi thì đậu.</p>
-   <p style="color: white; background-color: ${
-     correctCount >= quantity ? "green" : "red"
-   };
-   border-radius: 8px; padding: 10px; text-align: center;">
-   ${correctCount < quantity ? "Bạn đã trượt." : "Bạn đã đậu."}
-   </p>
-   <hr>
-  `;
-      // Insert result content into modal body
-      document.getElementById("resultModalBody").innerHTML = resultContent;
-
-      // Display the modal
-      $("#resultModal").modal("show");
-
-      const infoScreenFinish = document.getElementById("info-screen-finish");
-      infoScreenFinish.style.display = "block";
-      while (infoScreenFinish.firstChild) {
-        infoScreenFinish.removeChild(infoScreenFinish.firstChild);
-      }
-      const resultDiv = document.createElement("div");
-      resultDiv.innerHTML = `
-          <hr>
-          <h5 class="pt-1">Kết quả thi:</h5>
-          <p style="color: black; font-weight: 700;">Số câu đúng: ${correctCount} câu.</p>
-          <p style="color: black; font-weight: 700;">Số câu sai: ${incorrectCount} câu.</p>
-          <p style="color: black; font-weight: 700;">Số câu chưa chọn: ${unselectedCount} câu.</p>
-          <p>Bạn cần trả lời đúng ${quantity} câu hỏi thì đậu.</p>
-          <p style="color: white; background-color: ${
-            correctCount >= quantity ? "green" : "red"
-          };
-          border-radius: 8px; padding: 10px; text-align: center;">
-          ${correctCount < quantity ? "Bạn đã trượt." : "Bạn đã đậu."}
-          </p>
-          <hr>
-          `;
-
-      infoScreenFinish.appendChild(resultDiv);
-
-      document.getElementById("info-status").textContent = "Trạng thái: Đã thi";
-      submitButton.style.display = "none";
-      showQuestionDetails(0, questions);
-
-      // clear countdown
       clearInterval(countdownInterval);
+      handleClickSubmitButton();
     }
   });
+};
 
+const handleClickSubmitButton = () => {
+  //! 1. kiểm tra đáp án
+  let questions = getQuestions(document.getElementById("topic-select").value);
+  const { correctCount, incorrectCount, unselectedCount } =
+    checkAnswers(questions);
+
+  // Cập nhật thông tin trạng thái thi
+  document.getElementById("info-status").textContent = "Trạng thái: Đã thi";
+
+  //! 2. tạo và show modal kết quả,
+  // code for modal
+  // Prepare the result content for Modal
+  const resultContent = `
+        <hr>
+        <h5 class="pt-1">Kết quả thi:</h5>
+        <p style="color: black; font-weight: 700;">Số câu đúng: ${correctCount} câu.</p>
+        <p style="color: black; font-weight: 700;">Số câu sai: ${incorrectCount} câu.</p>
+        <p style="color: black; font-weight: 700;">Số câu chưa chọn: ${unselectedCount} câu.</p>
+        <p>Bạn cần trả lời đúng ${quantity} câu hỏi thì đậu.</p>
+        <p style="color: white; background-color: ${
+          correctCount >= quantity ? "green" : "red"
+        }; border-radius: 8px; padding: 10px; text-align: center;"> ${
+    correctCount < quantity ? "Bạn đã trượt." : "Bạn đã đậu."
+  }
+        </p>
+        <hr>
+    `;
+  // Insert result content into modal body
+  document.getElementById("resultModalBody").innerHTML = resultContent;
+  // Display the modal
+  $("#resultModal").modal("show");
+
+  //! 3. tạo nội dung cho info-screen-finish,
+  const infoScreenFinish = document.getElementById("info-screen-finish");
+  infoScreenFinish.style.display = "block";
+  while (infoScreenFinish.firstChild) {
+    infoScreenFinish.removeChild(infoScreenFinish.firstChild);
+  }
+  const resultDiv = document.createElement("div");
+  resultDiv.innerHTML = `
+      <hr>
+      <h5 class="pt-1">Kết quả thi:</h5>
+      <p style="color: black; font-weight: 700;">Số câu đúng: ${correctCount} câu.</p>
+      <p style="color: black; font-weight: 700;">Số câu sai: ${incorrectCount} câu.</p>
+      <p style="color: black; font-weight: 700;">Số câu chưa chọn: ${unselectedCount} câu.</p>
+      <p>Bạn cần trả lời đúng ${quantity} câu hỏi thì đậu.</p>
+      <p style="color: white; background-color: ${
+        correctCount >= quantity ? "green" : "red"
+      };
+      border-radius: 8px; padding: 10px; text-align: center;">
+      ${correctCount < quantity ? "Bạn đã trượt." : "Bạn đã đậu."}
+      </p>
+      <hr>
+      `;
+  infoScreenFinish.appendChild(resultDiv);
+
+  //! 4. ẩn nút submit,
+  document.querySelector("#submit-button").style.display = "none";
+
+  //! 5. hiển thị câu đầu tiên có đổi màu bg
+  showQuestionDetails(0, questions);
+};
+
+//! SHOW ANSWER CONTAINER LỰA CHỌN CÁC CÂU TRẢ LỜI BÊN PHẢI
+const showSelectAnswer = (questions) => {
+  // TẠO ANSWERS CONTAINER
+  const answersContainer = document.getElementById("answers-container");
+  answersContainer.innerHTML = "";
+  // TẠO 2 thẻ div col-6
   const col1 = document.createElement("div");
   col1.classList.add("col-6");
-
   const col2 = document.createElement("div");
   col2.classList.add("col-6");
 
+  // TẠO 1 thẻ div row
   const rowContainer = document.createElement("div");
   rowContainer.classList.add("row");
 
+  // ADD col1 và col2 vào rowContainer
   rowContainer.appendChild(col1);
   rowContainer.appendChild(col2);
 
+  // THÊM ROW VÀO ANSWERS CONTAINER
   answersContainer.appendChild(rowContainer);
+  // -------------------------------------------
 
+  // quét qua mảng các câu trả lời, col div là cha của questionDiv
   questions.forEach((question, index) => {
     const colDiv = document.createElement("div");
-
     const questionDiv = document.createElement("div");
     questionDiv.classList.add("question-detail");
     questionDiv.dataset.index = index;
+    // colDiv là thẻ cha ở ngoài tác dụng là để hiển thị khi click vào câu hỏi
     questionDiv.addEventListener("click", () =>
       showQuestionDetails(index, questions)
     );
     colDiv.appendChild(questionDiv);
 
+    // TẠO ANSWER DIV
     const answerDiv = document.createElement("div");
     answerDiv.classList.add("answer-option");
     answerDiv.dataset.index = index;
+    answerDiv.innerHTML = `
+    <strong>C${index + 1} </strong>
+    ${question.answers
+      .map(
+        (answer, answerIndex) => `
+          <label style="margin: 0;">
+            ${answerIndex + 1}
+            <input type="checkbox" name="answer-${index}" value="${
+          answerIndex + 1
+        }" style="width: 15px; height: 15px; margin: 0 2px 0 0;"
+            onclick="selectAnswer(${index}, ${answerIndex})">
+          </label>`
+      )
+      .join("")}
+  `;
+    // xử lý answerdiv khi click vào
     answerDiv.addEventListener("click", (event) => {
       if (isQuizSubmitted) {
         const clickedIndex = Number(event.currentTarget.dataset.index);
@@ -571,22 +565,6 @@ function displayQuestions(questions) {
       }
     });
 
-    answerDiv.innerHTML = `
-      <strong>C${index + 1} </strong>
-      ${question.answers
-        .map(
-          (answer, answerIndex) => `
-            <label style="margin: 0;">
-              ${answerIndex + 1}
-              <input type="checkbox" name="answer-${index}" value="${
-            answerIndex + 1
-          }" style="width: 15px; height: 15px; margin: 0 2px 0 0;"
-              onclick="selectAnswer(${index}, ${answerIndex})">
-            </label>`
-        )
-        .join("")}
-    `;
-
     colDiv.appendChild(answerDiv);
 
     if (index < 13) {
@@ -596,12 +574,11 @@ function displayQuestions(questions) {
     }
   });
 
-  answersContainer.appendChild(submitButton);
-}
+  // ! THÊM BUTTON SUBMIT VÀO ANSWER CONTAINER
+  addSubmitButton();
+};
 
-// --------------------  *  --------------------  *  ----------------------
-
-// In câu hỏi ở bên trái
+//! HIỂN THỊ 1 CÂU HỎI BÊN TRÁI ĐẦU VÀO LÀ INDEX VÀ QUESTIONS THẺ QUESTION-CONTAINER
 function showQuestionDetails(index, questions) {
   const questionDetails = questions[index];
   const questionsContainer = document.getElementById("questions-container");
@@ -627,19 +604,9 @@ function showQuestionDetails(index, questions) {
               .join("")}
         `;
 }
+//! HIỂN THỊ 1 CÂU HỎI BÊN TRÁI ĐẦU VÀO LÀ INDEX VÀ QUESTIONS THẺ QUESTION-CONTAINER END************************************
 
-// --------------------  *  --------------------  *  ----------------------
-
-// Test thử ở clg
-function selectAnswer(questionIndex, answerIndex) {
-  console.log(
-    `Chọn câu trả lời: ${answerIndex + 1} cho câu hỏi: ${questionIndex + 1}`
-  );
-  showQuestionDetails(questionIndex, getQuestions()); // Update question details with selected answer
-}
-
-// --------------------  *  --------------------  *  ----------------------
-
+//! KIỂM TRA ĐÚNG SAI KHI NỘP BÀI TRẢ VỀ KẾT QUẢ correctCount, incorrectCount, unselectedCount
 function checkAnswers(questions) {
   let correctCount = 0;
   let incorrectCount = 0;
@@ -692,13 +659,14 @@ function checkAnswers(questions) {
 
   return { correctCount, incorrectCount, unselectedCount };
 }
+//! KIỂM TRA ĐÚNG SAI KHI NỘP BÀI TRẢ VỀ KẾT QUẢ correctCount, incorrectCount, unselectedCount END************************************
 
+// ! SỬ DỤNG CÁC PHÍM TẮT
 // --------------------  *  --------------------  *  ----------------------
 
 // Sử dụng phím lên xuống trái phải
-
 document.addEventListener("keydown", function (event) {
-  if (isQuizSubmitted) return;
+  // if (isQuizSubmitted) return;
   const selectedTopic = document.getElementById("topic-select").value;
   const questions = getQuestions(selectedTopic);
   const maxIndex = questions.length - 1;
@@ -714,9 +682,16 @@ document.addEventListener("keydown", function (event) {
     case "ArrowLeft":
       if (currentQuestionIndex > 0) {
         currentQuestionIndex--;
+
         showQuestionDetails(currentQuestionIndex, questions);
-        allAnswerDivs.forEach((div) => (div.style.backgroundColor = ""));
-        allAnswerDivs[currentQuestionIndex].style.backgroundColor = "#cacaca";
+
+        if (!isQuizSubmitted) {
+          allAnswerDivs.forEach((div) => (div.style.backgroundColor = ""));
+          allAnswerDivs[currentQuestionIndex].style.backgroundColor = "#cacaca";
+        } else {
+          allAnswerDivs.forEach((div) => (div.style.border = ""));
+          allAnswerDivs[currentQuestionIndex].style.border = " 2px solid blue";
+        }
       }
       break;
     case "ArrowDown":
@@ -724,8 +699,14 @@ document.addEventListener("keydown", function (event) {
       if (currentQuestionIndex < maxIndex) {
         currentQuestionIndex++;
         showQuestionDetails(currentQuestionIndex, questions);
-        allAnswerDivs.forEach((div) => (div.style.backgroundColor = ""));
-        allAnswerDivs[currentQuestionIndex].style.backgroundColor = "#cacaca";
+
+        if (!isQuizSubmitted) {
+          allAnswerDivs.forEach((div) => (div.style.backgroundColor = ""));
+          allAnswerDivs[currentQuestionIndex].style.backgroundColor = "#cacaca";
+        } else {
+          allAnswerDivs.forEach((div) => (div.style.border = ""));
+          allAnswerDivs[currentQuestionIndex].style.border = " 2px solid blue";
+        }
       }
       break;
   }
@@ -738,6 +719,7 @@ document.addEventListener("keydown", function (event) {
 document.addEventListener("keydown", function (event) {
   const key = event.key;
   const validKeys = ["1", "2", "3", "4"];
+  if (isQuizSubmitted) return;
 
   if (validKeys.includes(key)) {
     const questionIndex = currentQuestionIndex;
@@ -757,6 +739,7 @@ document.addEventListener("keydown", function (event) {
 
 // Sử dụng phím ESC để nộp bài
 window.addEventListener("keydown", function (event) {
+  if (isQuizSubmitted) return;
   if (event.key === "Escape") {
     const submitButton = document.getElementById("submit-button");
     if (submitButton) {
@@ -768,6 +751,8 @@ window.addEventListener("keydown", function (event) {
 
 // Sử dụng phím Enter để nộp bài
 window.addEventListener("keydown", function (event) {
+  if (isQuizSubmitted) return;
+
   if (event.key === "Enter") {
     const submitButton = document.getElementById("submit-button");
     if (submitButton) {
@@ -777,7 +762,6 @@ window.addEventListener("keydown", function (event) {
 });
 
 let countdownInterval;
-
 function startCountdown(duration) {
   let countdownElement = document.getElementById("countdown");
   let remainingTime = duration;
@@ -786,7 +770,7 @@ function startCountdown(duration) {
     let minutes = Math.floor(remainingTime / 60);
     let seconds = remainingTime % 60;
 
-    countdownElement.textContent = `${minutes}:${
+    countdownElement.textContent = `THỜI GIAN THI CÒN LẠI: ${minutes}:${
       seconds < 10 ? "0" : ""
     }${seconds}`;
 
@@ -796,7 +780,7 @@ function startCountdown(duration) {
       clearInterval(countdownInterval);
       const submitButton = document.getElementById("submit-button");
       if (submitButton) {
-        submitButton.click();
+        handleClickSubmitButton();
       }
     }
   }, 1000);

@@ -264,8 +264,6 @@ header.sticky .dropdown-menu a:hover {
     color: #9a0015;
 }
 
-
-
 /* khu tài khoản */
 header .btn-DK {
     display: flex;
@@ -305,7 +303,6 @@ header .btn_buy:hover p {
     color: white;
 }
 
-
 header .btn_buy {
     position: relative;
     cursor: pointer;
@@ -317,7 +314,6 @@ header .btn_buy p {
     line-height: 0.2;
     transition: all 1s;
 }
-
 
 header .btn-outline_user {
     position: relative;
@@ -356,9 +352,6 @@ header .btn_user_ten a:hover {
     text-decoration: none;
 }
 
-
-
-
 /* THAY ĐỔI MÀN HÌNH ------------- */
 
 @media screen and (max-width: 1100px) {
@@ -390,8 +383,6 @@ header .btn_user_ten a:hover {
         background-color: rgba(0, 0, 0, 0.5);
     }
 
-
-
     header .btn-outline1 {
         background-color: rgba(255, 255, 255, 0);
         border: 1px solid rgba(255, 255, 255, 0);
@@ -419,8 +410,6 @@ header .btn_user_ten a:hover {
         right: -75px;
         top: 50px;
     }
-
-
 
     /* Khóa Header khi cuộn chuột (sticky) ------------- */
     header.sticky .navbar-collapse {
@@ -850,7 +839,6 @@ header .btn_user_ten a:hover {
     color: #9a0015;
 }
 
-
 .card-body a {
     font-weight: 600;
     color: #232323;
@@ -1007,7 +995,6 @@ footer hr {
 }
 
 @media screen and (max-width: 576px) {
-
     .footer_top__mail input,
     .footer_top__mail button:last-child,
     .footer_top__mail button {
@@ -1224,16 +1211,16 @@ footer hr {
     color: #ff0022;
 }
 
-
-.btn-link{
+.btn-link {
     color: black;
     font-weight: 500;
 }
-.btn-link:hover{
+.btn-link:hover {
     color: #9a0015;
     text-decoration: none;
 }
-.btn.focus, .btn:focus{
+.btn.focus,
+.btn:focus {
     box-shadow: none;
     color: #9a0015;
 }
@@ -1264,28 +1251,25 @@ footer hr {
     margin: 0 10px 20px;
 }
 
-
 /* HƯỚNG DẪN PHẦN LUẬT ----------------------------------------------------------*/
 
-
-.accordionExample_img img{
+.accordionExample_img img {
     width: auto;
     height: 50px;
 }
-#accordionExample_img2{
+#accordionExample_img2 {
     width: auto;
     height: 250px;
 }
-
 
 /* ĐĂNG KÝ - ĐĂNG NHẬP - THÔNG TIN ----------------------------------------------------------*/
 
 .fromDangNhap {
     text-align: center;
-    background: url(../img/banner_7.jpeg) top center /cover;
+    background: url(../img/banner_7.jpeg) top center / cover;
     /* filter: brightness(0.6); */
 }
-.fromDangNhap_item{
+.fromDangNhap_item {
     width: 40%;
     margin: auto;
     padding: 150px 0 50px;
@@ -1293,20 +1277,16 @@ footer hr {
 }
 
 .fromDangNhap_item h2,
-.fromDangNhap_item p{
+.fromDangNhap_item p {
     color: white;
     margin: 0;
 }
 
 @media screen and (max-width: 992px) {
-    .fromDangNhap_item{
+    .fromDangNhap_item {
         width: 70%;
     }
 }
-
-
-
-
 
 /* THI THỬ ----------------------------------------------------------*/
 
@@ -1414,4 +1394,3 @@ footer hr {
     background-color: #9a0015;
     color: white;
 } */
-
